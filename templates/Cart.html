@@ -1,0 +1,161 @@
+{% extends 'layout.html' %}
+{% block title %}
+    <title>Cart</title>
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+{% endblock %}
+
+{% block navigation %}
+<nav class="navbar">
+    <span class="navbar-toggle" id="js-navbar-toggle">
+        <i class="fa fa-navicon"></i>
+    </span>
+    <a href="{{url_for('index')}}" class="logo">Dashboard</a>
+    <ul class="main-nav" id="js-menu">
+        <li>
+            <a href = "{{url_for('regionalRoute')}}" class="nav-links regional">Regional</a>
+        </li>
+        <li>
+            <a href="{{url_for('financial')}}" class="nav-links financial">Financial</a>
+        </li>
+        <li>
+            <a href="{{url_for('categorical')}}" class="nav-links categorical">Categorical</a>
+        </li>
+        <li>
+            <a href="{{url_for('sub_categorical')}}" class="nav-links sub-categorical">Sub-Categorical</a>
+        </li>
+        <li>
+            <a href="{{url_for('other')}}" class="nav-links other">Other</a>
+        </li>
+        <li>
+            <a href="{{url_for('forecastPage')}}" class="nav-links forecast">Forecast</a>
+        </li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block container %}
+<div class="cart-container">
+    <table id="order">
+        <tr>
+          <th>Product Name</th>
+          <th>Date</th>
+          <th>Quantity</th>
+        </tr>
+    
+    </table>
+    <div class="place-order">
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        $( document ).ready(function() {
+            $.ajax({
+                url: "/getCart",
+                type: "GET",
+                contentType: 'application/json',
+                dataType:"json",
+                success: function (data) {
+                    if (data.length === 0){
+                        $("#order").children().remove()
+                        $("#order").append(`<tr><td>No Products added in the cart</td></tr>`)
+                        $('.place-order').remove()
+                        $('.qr-img').remove()
+                    }
+                    data.forEach((element,index) => {
+                        console.log(element)
+                        $('#order').append(`<tr id=product-${element.pid}>
+                            <td class = product-name>${element.name}</td>
+                            <td class = product-date>${element.date}</td>
+                            <td class = product-qty>
+                                <input type="text" id=p-${element.pid} value=${element.qty} />
+                                <div class= plus-minus-btn-container>
+                                    <button id=i-${index} class=plus-btn>+</button>
+                                    <button id=d-${index} class=minus-btn>-</button>
+                                </div>
+                                <button class='delete-product-btn'><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>`)
+                    });
+
+                    $('.plus-btn').click(function() {
+                        $count = $(this).parent().siblings('input').val()
+                        return $(this).parent().siblings('input').val(Number($count)+1)
+                    });
+                    $('.minus-btn').click(function() {
+                        $count = $(this).parent().siblings('input').val()
+                        return $(this).parent().siblings('input').val(Number($count)-1)
+                    });
+
+                    $('.delete-product-btn').click(function(e){
+                        e.preventDefault();
+                        let pid = $(this).parent().parent().attr('id')
+                        pid=pid.split('-')[1]
+                        const productinfo = {
+                            'pid': Number(pid),
+                        }
+                        $tr = $(this).closest('tr')
+                        $.ajax({
+                            url: "/removeFromCart",
+                            type: "DELETE",
+                            contentType: 'application/json',
+                            dataType:"json",
+                            data: JSON.stringify(productinfo),
+                            success: function (data) {
+                                $tr.remove()
+                                if (data.itemsInCart<=0){
+                                    $("#order").children().remove()
+                                    $("#order").append(`<tr><td>No Products added in the cart</td></tr>`)
+                                    $('.place-order').remove()
+                                }
+                                $('.cart-container').append('<div id="snackbar">Product has been removed</div>')
+                                $('#snackbar').addClass('show');
+                                setTimeout(function(){ $('#snackbar').removeClass('show') }, 2000);
+                            }
+                        });
+                        
+                        })
+                        $('.place-order').append(
+                            `<button class="place-order-btn">Place Order</button>`
+                        )
+
+                        $('.place-order-btn').click(function(){
+                            let products = []
+                            $.map($('#order tr'),function(val,i){
+                               var obj={
+                                   'pid': $(val).find(`#p-${i}`).attr('id'),
+                                   'name':$(val).find('.product-name').text(),
+                                   'date':$(val).find('.product-date').text(),
+                                   'qty': $(val).find(`#p-${i}`).val()
+                               }
+                               products.push(obj)
+                            })
+                            products.reverse().pop()
+                            products = products.reverse()
+                            $.ajax({
+                                url: "/placeOrder",
+                                type: "PATCH",
+                                contentType: 'application/json',
+                                dataType:"json",
+                                data: JSON.stringify(products),
+                                success: function (data) {
+                                    // Get the snackbar DIV
+                                    $('.cart-container').append('<div id="snackbar">Order has been placed</div>')
+                                    $('#snackbar').addClass('show');
+                                    setTimeout(function(){ $('#snackbar').removeClass('show') }, 2000);
+                                }
+                            });
+                        })
+                    }
+            });
+            
+        });
+       
+        
+    </script>
+
+{% endblock %}

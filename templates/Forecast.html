@@ -1,0 +1,320 @@
+{% extends 'layout.html' %}
+{% block title %}
+    <title>Forecast</title>
+{% endblock %}
+{% block styles %}
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+{% endblock %}
+
+{% block navigation %}
+<nav class="navbar">
+    <span class="navbar-toggle" id="js-navbar-toggle">
+        <i class="fa fa-navicon"></i>
+    </span>
+    <a href="{{url_for('index')}}" class="logo">Dashboard</a>
+    <ul class="main-nav" id="js-menu">
+        <li>
+            <a href = "{{url_for('regionalRoute')}}" class="nav-links regional">Regional</a>
+        </li>
+        <li>
+            <a href="{{url_for('financial')}}" class="nav-links financial">Financial</a>
+        </li>
+        <li>
+            <a href="{{url_for('categorical')}}" class="nav-links categorical">Categorical</a>
+        </li>
+        <li>
+            <a href="{{url_for('sub_categorical')}}" class="nav-links sub-categorical">Sub-Categorical</a>
+        </li>
+        <li>
+            <a href="{{url_for('other')}}" class="nav-links other">Other</a>
+        </li>
+        <li>
+            <a href="{{url_for('forecastPage')}}" class="nav-links forecast">Forecast</a>
+        </li>
+        <li>
+            <a href="{{url_for('cartPage')}}" class="nav-links Cart"><i class="fa fa-shopping-cart"></i><span class='cart-val'></span></a>
+        </li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block container %}
+<div id="Forecaster" class="tabcontent">
+    <div class="row">
+        <div class="config forecast-config">
+            <select class="form-control" id ='months'>
+            </select>
+            <select class="form-control" id ='years'>
+            </select>
+            <select class="form-control" id ='cate'>
+            </select>
+            <button class="forecast-btn" id="cate-forecast">Forecast</button>
+        </div>
+    </div>
+    <div class="row small-cards">
+        <div class="chart" id="plot1">
+            <div class="infomatics">
+                <span class="top_infomatics">
+                    <h2 id="last-month"></h2>
+                    <h3 id="last-month-date"></h3>
+                </span>
+                <h5 id="percent-change-lm"></h5>
+            </div>
+            <div class="custom-shape-divider-bottom-1604464392">
+                <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+                </svg>
+            </div>     
+        </div>
+        <div class="chart" id="plot2">
+            <div class="infomatics">
+                <span class="top_infomatics">
+                    <h2 id="present-month"></h2>
+                    <h3 id="present-month-date"></h3>
+                </span>
+                <h5 id="percent-change-tm"></h5>
+            </div>
+            <div class="custom-shape-divider-bottom-1604464392">
+                <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="chart" id="plot3">
+            <div class="infomatics">
+                <span class="top_infomatics">
+                    <h2 id="next-month"></h2>
+                    <h3 id="next-month-date"></h3>
+                </span>
+                <h5 id="percent-change-nm"></h5>
+            </div>
+            <div class="custom-shape-divider-bottom-1604464392">
+                <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sub-Categories -->
+    <div class="row">
+        <div class="config forecast-config">
+            <select class="form-control" id ='months-2'>
+            </select>
+            <select class="form-control" id ='years-2'>
+            </select>
+            <select class="form-control" id ='subcate'>
+            </select>
+            <button class="forecast-btn" id="subcate-forecast">Forecast</button>
+            <button class="cart-btn" id="subcate-cart"><span><i class="fa fa-shopping-cart"></i></span> Add to Cart</button>
+        </div>
+    </div>
+    <div class="row small-cards">
+        <div class="chart" id="plot4">
+            <div class="infomatics">
+                <span class="top_infomatics">
+                    <h2 id="last-month-subcate"></h2>
+                    <h3 id="last-month-date-subcate"></h3>
+                </span>
+                <h5 id="percent-change-lm-sub"></h5>
+            </div>
+            <div class="custom-shape-divider-bottom-1605097288">
+                <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+                </svg>
+            </div>     
+        </div>
+        <div class="chart" id="plot5">
+            <div class="infomatics">
+                <span class="top_infomatics">
+                    <h2 id="present-month-subcate"></h2>
+                    <h3 id="present-month-date-subcate"></h3>
+                </span>
+                <h5 id="percent-change-tm-sub"></h5>
+            </div>
+            <div class="custom-shape-divider-bottom-1605097288">
+                <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="chart" id="plot6">
+            <div class="infomatics">
+                <span class="top_infomatics">
+                    <h2 id="next-month-subcate"></h2>
+                    <h3 id="next-month-date-subcate"></h3>
+                </span>
+                <h5 id="percent-change-nm-sub"></h5>
+            </div>
+            <div class="custom-shape-divider-bottom-1605097288">
+                <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block script %}
+
+    <script>
+        let arr = ['January','February','March','April','May','June','July','August','September','October','November','December']
+        arr.map((item)=>{
+            $('#months').append(`<option class = custom-option value=${item}>${item}</option>`)
+            $('#months-2').append(`<option class = custom-option value=${item}>${item}</option>`)
+        })
+        var count = 0
+        let years = ['2018','2019']
+        years.map((item)=>{
+            $('#years').append(`<option class = custom-option value=${item}>${item}</option>`)
+            $('#years-2').append(`<option class = custom-option value=${item}>${item}</option>`)
+        })
+        
+        let category = ['Furniture','Office Supplies','Technology']
+        category.map((item)=>{
+            $('#cate').append(`<option class = custom-option value="${item}">${item}</option>`)
+        })
+
+        let subcategory = ["Bookcases","Chairs","Labels","Tables","Storage","Furnishings","Art","Phones","Binders","Appliances","Paper","Accessories","Envelopes","Fasteners","Supplies","Machines","Copiers"]
+        subcategory.map((item)=>{
+            $('#subcate').append(`<option class = custom-option value="${item}">${item}</option>`)
+        })
+
+        $('.logo').hover(function(){
+            var $this = $(this);
+            $this.data('defaultText', $this.text());
+            $this.text("Home");
+        },function() {
+            var $this = $(this);
+            $this.text($this.data('defaultText'));
+        })
+
+        function getDate(cate){
+            if (cate === 1){
+                const va = arr.indexOf($('#months').val())
+                const m = va+1
+                let month
+                if (m < 10){
+                    month = '0'+String(m)
+                }else{
+                    month = m
+                }
+                const date = `${$('#years').val()}-${month}-01`
+
+                return date
+            }
+            else{
+                const va = arr.indexOf($('#months-2').val())
+                const m = va+1
+                let month
+                if (m < 10){
+                    month = '0'+String(m)
+                }else{
+                    month = m
+                }
+                const date = `${$('#years-2').val()}-${month}-01`
+
+                return date
+            }
+        }
+
+        function calcPercentage(lastDateQty,presentDateQty){
+            return ((presentDateQty - lastDateQty)/lastDateQty)*100
+        }
+
+        function increaseOrDecrease(percentage){
+            if (percentage > 0){
+                return  '<i class="fa fa-long-arrow-up"></i>'
+            }else if (percentage < 0){
+                return  '<i class="fa fa-long-arrow-down"></i>'
+            }else{
+                return 'change'
+            }
+        }
+
+        $('#cate-forecast').on('click',function(e){
+            e.preventDefault();
+            $.ajax({
+                url: "/forecast",
+                type: "GET",
+                contentType: 'application/json;charset=UTF-8',
+                data: {
+                    'date': getDate(1),
+                    'category': $('#cate').val()
+                },
+                dataType:"json",
+                success: function (data) {
+
+                    $('#present-month').text(`Quantity: ${data.present.qty}`)
+                    $('#present-month-date').text(data.present.date)
+                    $('#last-month').text(`Quantity: ${data.previous.qty}`)
+                    $('#last-month-date').text(data.previous.date)
+                    $('#next-month').text(`Quantity: ${data.next.qty}`)
+                    $('#next-month-date').text(data.next.date)
+
+                    
+                    $('#percent-change-tm').text(Math.abs(Math.round(calcPercentage(data.previous.qty,data.present.qty)))+'% ')
+                    $('#percent-change-tm').append(`${increaseOrDecrease(calcPercentage(data.previous.qty,data.present.qty))} since last month`)
+                    $('#percent-change-nm').text(Math.abs(Math.round(calcPercentage(data.present.qty,data.next.qty)))+'% ')
+                    $('#percent-change-nm').append(`${increaseOrDecrease(calcPercentage(data.present.qty,data.next.qty))} in next month`)
+                    
+                }
+            });
+            
+        })
+        $('#subcate-forecast').on('click',function(e){
+            e.preventDefault();
+            $.ajax({
+                url: "/subcat-forecast",
+                type: "GET",
+                contentType: 'application/json;charset=UTF-8',
+                data: {
+                    'date': getDate(),
+                    'sub-category': $('#subcate').val()
+                },
+                dataType:"json",
+                success: function (data) {
+                    console.log(data)
+                    $('#present-month-subcate').text(`Quantity: ${data.present.qty}`)
+                    $('#present-month-date-subcate').text(data.present.date)
+                    $('#last-month-subcate').text(`Quantity: ${data.previous.qty}`)
+                    $('#last-month-date-subcate').text(data.previous.date)
+                    $('#next-month-subcate').text(`Quantity: ${data.next.qty}`)
+                    $('#next-month-date-subcate').text(data.next.date)
+
+                    $('#present-month-subcate').attr("data-qty",data.present.qty)
+
+                    
+                    $('#percent-change-tm-sub').text(Math.abs(Math.round(calcPercentage(data.previous.qty,data.present.qty)))+'% ')
+                    $('#percent-change-tm-sub').append(`${increaseOrDecrease(calcPercentage(data.previous.qty,data.present.qty))} since last month`)
+                    $('#percent-change-nm-sub').text(Math.abs(Math.round(calcPercentage(data.present.qty,data.next.qty)))+'% ')
+                    $('#percent-change-nm-sub').append(`${increaseOrDecrease(calcPercentage(data.present.qty,data.next.qty))} in next month`)
+                    
+                }
+            });
+        })
+
+        $('#subcate-cart').click(function(e){
+            e.preventDefault();
+            const productinfo = {
+                'date': getDate(),
+                'name': $('#subcate').val(),
+                'qty': $('#present-month-subcate').attr('data-qty')
+            }
+            $.ajax({
+                url: "/addToCart",
+                type: "POST",
+                contentType: 'application/json',
+                data: JSON.stringify(productinfo),
+                dataType:"json",
+                success: function(data){
+                    count++
+                    $('.cart-val').addClass('badge').attr('id','lblCartCount').text(count)
+                }
+            })
+        })
+
+    </script>
+{% endblock %}

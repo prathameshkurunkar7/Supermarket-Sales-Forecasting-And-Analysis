@@ -1,0 +1,122 @@
+{% extends 'layout.html' %}
+{% block title %}
+    <title>Sub-Categorical</title>
+{% endblock %}
+{% block styles %}
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+{% endblock %}
+
+{% block navigation %}
+<nav class="navbar">
+    <span class="navbar-toggle" id="js-navbar-toggle">
+        <i class="fa fa-navicon"></i>
+    </span>
+    <a href="{{url_for('index')}}" class="logo">Dashboard</a>
+    <ul class="main-nav" id="js-menu">
+        <li>
+            <a href = "{{url_for('regionalRoute')}}" class="nav-links regional">Regional</a>
+        </li>
+        <li>
+            <a href="{{url_for('financial')}}" class="nav-links financial">Financial</a>
+        </li>
+        <li>
+            <a href="{{url_for('categorical')}}" class="nav-links categorical">Categorical</a>
+        </li>
+        <li>
+            <a href="{{url_for('sub_categorical')}}" class="nav-links sub-categorical">Sub-Categorical</a>
+        </li>
+        <li>
+            <a href="{{url_for('other')}}" class="nav-links other">Other</a>
+        </li>
+        <li>
+            <a href="{{url_for('forecastPage')}}" class="nav-links forecast">Forecast</a>
+        </li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block container %}
+<div id="Subcategorical" class="tabcontent">
+    <div class="row">
+        <div class="config">
+            <label> Choose Sub-Category</label>
+            <select class="form-control" id ='first_subCat'>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="chart" id="plot1">
+                    
+        </div>
+        <div class="chart" id="plot2">
+            
+        </div>
+        <div class="chart" id="plot3">
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        $('.logo').hover(function(){
+            var $this = $(this);
+            $this.data('defaultText', $this.text());
+            $this.text("Home");
+        },function() {
+            var $this = $(this);
+            $this.text($this.data('defaultText'));
+        })
+
+        let arr = ["Bookcases","Chairs","Labels","Tables","Storage","Furnishings","Art","Phones","Binders","Appliances","Paper","Accessories","Envelopes","Fasteners","Supplies","Machines","Copiers"]
+        arr.map((item)=>{
+            $('#first_subCat').append(`<option class = custom-option value=${item}>${item}</option>`)
+        })
+        let graph1 = '{{plot1 | safe}}';
+        let graph2 = '{{plot2 | safe}}';
+        let graph3 = '{{plot3 | safe}}';
+
+        let p1 = JSON.parse(graph1);
+        let p2 = JSON.parse(graph2);
+        let p3 = JSON.parse(graph3);
+
+
+        Plotly.newPlot($('#plot1')[0],p1,{responsive:true});
+        Plotly.newPlot($('#plot2')[0],p2,{responsive:true});
+        Plotly.newPlot($('#plot3')[0],p3,{responsive:true});
+
+
+        $('#first_subCat').on('change',function(e){
+            e.preventDefault();
+            $.ajax({
+                url: "/select-subcategory",
+                type: "GET",
+                contentType: 'application/json;charset=UTF-8',
+                data: {
+                    'selected': document.getElementById('first_subCat').value
+                },
+                dataType:"json",
+                success: function (data) {
+                    Plotly.newPlot($('#plot2')[0],data);
+                }
+            });
+        })
+
+        $('#first_subCat').on('change',function(e){
+            e.preventDefault();
+            $.ajax({
+                url: "/select-monthly-subcategory",
+                type: "GET",
+                contentType: 'application/json;charset=UTF-8',
+                data: {
+                    'selected': document.getElementById('first_subCat').value
+                },
+                dataType:"json",
+                success: function (data) {
+                    Plotly.newPlot($('#plot3')[0],data);
+                }
+            });
+        })
+    </script>
+{% endblock %}

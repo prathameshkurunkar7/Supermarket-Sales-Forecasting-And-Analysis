@@ -1,0 +1,124 @@
+{% extends 'layout.html' %}
+{% block title %}
+    <title>Financial</title>
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+{% endblock %}
+
+{% block navigation %}
+<nav class="navbar">
+    <span class="navbar-toggle" id="js-navbar-toggle">
+        <i class="fa fa-navicon"></i>
+    </span>
+    <a href="{{url_for('index')}}" class="logo">Dashboard</a>
+    <ul class="main-nav" id="js-menu">
+        <li>
+            <a href = "{{url_for('regionalRoute')}}" class="nav-links regional">Regional</a>
+        </li>
+        <li>
+            <a href="{{url_for('financial')}}" class="nav-links financial">Financial</a>
+        </li>
+        <li>
+            <a href="{{url_for('categorical')}}" class="nav-links categorical">Categorical</a>
+        </li>
+        <li>
+            <a href="{{url_for('sub_categorical')}}" class="nav-links sub-categorical">Sub-Categorical</a>
+        </li>
+        <li>
+            <a href="{{url_for('other')}}" class="nav-links other">Other</a>
+        </li>
+        <li>
+            <a href="{{url_for('forecastPage')}}" class="nav-links forecast">Forecast</a>
+        </li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block container %}
+<div id="Financial" class="tabcontent">
+    <div class="row">
+        <div class="chart" id="plot1">
+                    
+        </div>
+        <div class="chart" id="plot2">
+                        
+        </div>
+        <div class="chart" id="plot3">
+                    
+        </div>
+        <div class="chart" id="plot4">
+                    
+        </div>
+    </div>
+    <div class="row">
+        <div class="config">
+            <select class="form-control yearSelector" id ='years'>
+            </select>
+        </div>
+        <div class="chart" id="plot5">
+                
+        </div>
+        <div class="chart" id="plot6">
+               
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        $('.logo').hover(function(){
+            var $this = $(this);
+            $this.data('defaultText', $this.text());
+            $this.text("Home");
+        },function() {
+            var $this = $(this);
+            $this.text($this.data('defaultText'));
+        })
+        
+        let years = ['2014','2015','2016','2017']
+        years.map((item)=>{
+            $('#years').append(`<option class = custom-option value=${item}>${item}</option>`)
+        })
+
+        let graph1 = '{{plot1 | safe}}';
+        let graph2 = '{{plot2 | safe}}';
+        let graph3 = '{{plot3 | safe}}';
+        let graph4 = '{{plot4 | safe}}';
+        let graph5 = '{{plot5 | safe}}';
+        let graph6 = '{{plot6 | safe}}';
+        
+        let p1 = JSON.parse(graph1);       
+        let p2 = JSON.parse(graph2);
+        let p3 = JSON.parse(graph3);
+        let p4 = JSON.parse(graph4);
+        let p5 = JSON.parse(graph5);
+        let p6 = JSON.parse(graph6);
+
+
+        Plotly.newPlot($('#plot1')[0],p1,{responsive:true});
+        Plotly.newPlot($('#plot2')[0],p2,{responsive:true});
+        Plotly.newPlot($('#plot3')[0],p3,{responsive:true});
+        Plotly.newPlot($('#plot4')[0],p4,{responsive:true});
+        Plotly.newPlot($('#plot5')[0],p5,{responsive:true});
+        Plotly.newPlot($('#plot6')[0],p6,{responsive:true});
+
+        $('#years').on('change',function(e){
+            e.preventDefault();
+            $.ajax({
+                url: "/select-year",
+                type: "GET",
+                contentType: 'application/json;charset=UTF-8',
+                data: {
+                    'year': $('#years').val()
+                },
+                dataType:"json",
+                success: function (data) {
+                    Plotly.newPlot($('#plot6')[0],data);
+                }
+            });
+        })
+    </script>
+{% endblock %}

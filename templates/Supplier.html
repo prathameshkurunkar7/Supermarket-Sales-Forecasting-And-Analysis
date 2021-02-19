@@ -1,0 +1,98 @@
+{% extends 'layout.html' %}
+{% block title %}
+    <title>Supplier</title>
+{% endblock %}
+
+
+{% block styles %}
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+{% endblock %}
+
+
+{% block container %}
+<div class="supplier-container">
+    <div class="supplier-header">
+        <h1>Supplier Window</h1>
+    </div>
+
+    <div class="control-options">
+        <div class="config">
+            <select class="form-control" id ='months'>
+            </select>
+            <select class="form-control" id ='years'>
+            </select>
+            <button class="check-order-btn" id="check-order"><span><i class="fa fa-search"></i>Find Orders</span></button>
+        </div>
+    </div>
+
+    <div class="qr">
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        $( document ).ready(function() {
+            let arr = ['January','February','March','April','May','June','July','August','September','October','November','December']
+            arr.map((item)=>{
+                $('#months').append(`<option class = custom-option value=${item}>${item}</option>`)
+            })
+            var count = 0
+            
+            let years = ['2018','2019']
+            years.map((item)=>{
+                $('#years').append(`<option class = custom-option value=${item}>${item}</option>`)
+            })
+
+            function getDate(){
+                const va = arr.indexOf($('#months').val())
+                const m = va+1
+                let month
+                if (m < 10){
+                    month = '0'+String(m)
+                }else{
+                    month = m
+                }
+                const date = `${$('#years').val()}-${month}-01`
+
+                return date
+            }
+            $('.qr').addClass('undisplay')
+
+            $('#check-order').on('click',function(e){
+                e.preventDefault();
+                const info = {
+                    'date' : getDate(),
+                }
+
+                $.ajax({
+                    url: "/getOrders",
+                    type: "POST",
+                    contentType: 'application/json',
+                    dataType:"json",
+                    data: JSON.stringify(info),
+                    success: function (data) {
+                        $('.qr').removeClass('undisplay')
+                        if (data.totalProducts === 0){
+                            $('.qr').children().remove()
+                            $('.qr').append(`<h2 class='qr-message'>${data.message}</h2>`)
+                        }else{
+                            $('.qr').children().remove()
+                            $('.qr').append(`<img id=qr-image></img>`)
+                            document.getElementById('qr-image').setAttribute('src', 'data:image/png;base64,'+ data.ImageBytes);
+                            $('.qr').append(`<h2 class='qr-message'>${data.message}</h2>`)
+                        }
+                    }
+                });
+
+            })
+
+
+
+        });
+
+        
+    </script>
+{% endblock %}
