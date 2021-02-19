@@ -480,7 +480,34 @@ input:focus, select:focus,textarea:focus, form:focus, button:focus {
     margin-right: 4px;
 }
 
+#supplier-link{
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
 
+#supplier-link a{
+    cursor: pointer;
+    text-decoration: none;
+    color: #fff;
+    transition: transform 0.2s ease-in-out;
+}
+
+#supplier-link a:link {
+    text-decoration: none;
+}
+  
+#supplier-link a:visited {
+    text-decoration: none;
+}
+
+#supplier-link a:hover {
+    transform:translateX(10px);
+}
+
+#supplier-link a:active {
+    text-decoration: none;
+}
 .supplier-container{
     height: 100vh;
 }
