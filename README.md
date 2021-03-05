@@ -40,4 +40,4 @@ Our solution focuses on solving this problem of mismanaged inventories for sever
 
 ## Research :page_facing_up:
   
-   [View Research Paper]()
+  [View Research Paper](./bin/SDL_RESEARCH_PAPER_MAIN.docx.pdf)
