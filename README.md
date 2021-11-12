@@ -37,7 +37,3 @@ Our solution focuses on solving this problem of mismanaged inventories for sever
 * **Hosted On** 
   
   ![Heroku](https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white)
-
-## Research :page_facing_up:
-  
-  [View Research Paper](./bin/SDL_RESEARCH_PAPER_MAIN.docx.pdf)
